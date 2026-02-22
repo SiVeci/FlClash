@@ -1,0 +1,50 @@
+name: Manual Build APK
+
+on:
+  workflow_dispatch: # 允许你手动点击按钮开始编译
+  push:
+    branches:
+      - main       # 当你向 main 分支推送代码时也触发编译（根据你合代码的分支名修改）
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. 下载你的仓库代码
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 2. 安装 Java 环境（Android 编译必备）
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 3. 安装 Flutter 环境
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # 使用稳定版
+          cache: true      # 开启缓存，下次编译更快
+
+      # 4. 下载 Flutter 依赖包
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 5. 执行编译
+      # 针对你的 Z Fold 7 (arm64-v8a)，我们只打这个架构的包，速度最快
+      - name: Build Android APK
+        run: flutter build apk --release --target-platform android-arm64
+
+      # 6. 将编译好的 APK 作为一个 Release 发布
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ github.run_number }}-custom"
+          name: "FlClash Custom Build #${{ github.run_number }}"
+          body: "This is a custom build with SSID switching support."
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
