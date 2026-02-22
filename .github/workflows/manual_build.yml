@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # 1. 下载你的仓库代码
+      # 1. 下载你的仓库代码（并递归下载所有子模块）
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          submodules: 'recursive' # 关键点：这一行会把 plugins 目录里的代码也拉下来
 
       # 2. 安装 Java 环境（Android 编译必备）
       - name: Setup Java
