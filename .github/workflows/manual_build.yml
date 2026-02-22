@@ -4,7 +4,7 @@ on:
   workflow_dispatch: # 允许你手动点击按钮开始编译
   push:
     branches:
-      - main       # 当你向 main 分支推送代码时也触发编译（根据你合代码的分支名修改）
+      - ssid-feature       # 当你向 main 分支推送代码时也触发编译（根据你合代码的分支名修改）
 
 jobs:
   build:
