@@ -30,6 +30,9 @@ jobs:
         with:
           channel: 'stable' # 使用稳定版
           cache: true      # 开启缓存，下次编译更快
+      # 在获取依赖之前，强制升级冲突的包
+      - name: Fix dependency conflict
+        run: flutter pub add material_color_utilities:^0.13.0
 
       # 4. 下载 Flutter 依赖包
       - name: Install Dependencies
